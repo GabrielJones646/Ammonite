@@ -17,9 +17,7 @@ class Repl(input: InputStream,
   val prompt = Ref("@ ")
 
   val colors = Ref[Colors](Colors.Default)
-  val frontEnd = Ref[FrontEnd](AmmoniteFrontEnd(
-    PartialFunction.empty
-  ))
+  val frontEnd = FrontEnd.JLineWindows //Ref[FrontEnd](AmmoniteFrontEnd(PartialFunction.empty ))
 
   val printer = new PrintStream(output, true)
   var history = new History(Vector())
@@ -28,8 +26,8 @@ class Repl(input: InputStream,
   val interp: Interpreter = new Interpreter(
     prompt,
     frontEnd,
-    frontEnd().width,
-    frontEnd().height,
+    frontEnd.width,
+    frontEnd.height,
     pprint.Config.Colors.PPrintConfig,
     colors,
     printer.print,
@@ -42,7 +40,7 @@ class Repl(input: InputStream,
   Timer("Repl init interpreter")
   val reader = new InputStreamReader(input)
   def action() = for{
-    (code, stmts) <- frontEnd().action(
+    (code, stmts) <- frontEnd.action(
       input,
       reader,
       output,
